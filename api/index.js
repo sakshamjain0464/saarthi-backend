@@ -6,8 +6,22 @@ const cors = require('cors');
 const app = express();
 
 // Middleware
-app.use(cors());
-app.use(express.json());
+// Middleware to verify Firebase token
+const authenticate = async (req, res, next) => {
+    const idToken = req.headers.authorization?.split("Bearer ")[1];
+    if (!idToken) {
+        return res.status(401).json({ error: "Unauthorized: No token provided." });
+    }
+
+    try {
+        const decodedToken = await admin.auth().verifyIdToken(idToken);
+        req.user = decodedToken;
+        next();
+    } catch (error) {
+        console.error("Error verifying token:", error.message);
+        return res.status(401).json({ error: "Unauthorized: Invalid token." });
+    }
+};
 
 // Gemini API configuration
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
