@@ -4,6 +4,23 @@ const axios = require('axios');
 const cors = require('cors');
 
 const app = express();
+const { Client, Account } = require('appwrite');
+
+const authMiddleware = async (req, res, next) => {
+  try {
+    const client = new Client()
+      .setEndpoint('https://cloud.appwrite.io/v1')
+      .setProject('YOUR_PROJECT_ID')
+      .setJWT(req.headers.authorization?.split(' ')[1] || '');
+
+    const account = new Account(client);
+    const user = await account.get();
+    req.user = user;
+    next();
+  } catch (error) {
+    res.status(401).json({ error: 'Unauthorized' });
+  }
+};
 
 // Middleware
 app.use(cors());
@@ -14,7 +31,7 @@ const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/
 const GEMINI_API_KEY = 'AIzaSyCUzpgJqzBXjLOmqO9l340YlyH5AqLyJWk';
 
 // Route to generate itinerary or handle general questions
-app.post('/generate-itinerary', async (req, res) => {
+app.post('/generate-itinerary',authMiddleware, async (req, res) => {
     const { destination, days, interests, followUpQuestion, itinerary } = req.body;
 
     try {
