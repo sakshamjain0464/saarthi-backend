@@ -15,27 +15,18 @@ const GEMINI_API_KEY = 'AIzaSyCUzpgJqzBXjLOmqO9l340YlyH5AqLyJWk';
 
 // Route to generate itinerary or handle general questions
 app.post('/generate-itinerary', async (req, res) => {
-    const { destination, days, interests, groupType, additionalInfo, followUpQuestion, itinerary } = req.body;
-
-    // Validate required fields for initial itinerary generation
-    if (!followUpQuestion && (!destination || !days || !interests)) {
-        return res.status(400).json({ error: 'Missing required fields: destination, days, or interests.' });
-    }
+    const { destination, days, interests, followUpQuestion, itinerary } = req.body;
 
     try {
         let prompt;
-
         if (followUpQuestion) {
-            // Handle follow-up questions
             prompt = `You are a friendly travel guide. The user has already planned the following itinerary: ${itinerary}. 
-            Answer this question in the context of the itinerary: ${followUpQuestion}. Format your response in Markdown.`;
+            Answer this question in the context of the itinerary: ${followUpQuestion}`;
         } else {
-            // Generate a new itinerary
             prompt = `Create a detailed ${days}-day travel itinerary for ${destination}. 
             Include recommendations based on these interests: ${interests.join(', ')}. 
-            Group Type: ${groupType}. Additional Information: ${additionalInfo}.
             Provide specific locations, estimated time at each location, 
-            and brief descriptions of activities. Format your response in Markdown.`;
+            and brief descriptions of activities.`;
         }
 
         console.log('Prompt sent to Gemini API:', prompt);
@@ -55,27 +46,13 @@ app.post('/generate-itinerary', async (req, res) => {
 
         console.log('Gemini API Response:', response.data);
 
-        let reply = response.data.candidates[0].content.parts[0].text;
-
-        // Post-process the response to ensure proper Markdown formatting
-        reply = formatAsMarkdown(reply);
-
+        const reply = response.data.candidates[0].content.parts[0].text;
         res.json({ reply });
     } catch (error) {
         console.error('Error calling Gemini API:', error.response ? error.response.data : error.message);
         res.status(500).json({ error: 'Failed to generate response.' });
     }
 });
-
-// Helper function to format the response as Markdown
-function formatAsMarkdown(text) {
-    // Add Markdown headers, lists, and bold formatting
-    text = text.replace(/Day (\d+)/g, '# Day $1'); // Convert "Day X" to Markdown headers
-    text = text.replace(/\*\*(.*?)\*\*/g, '**$1**'); // Ensure bold text is properly formatted
-    text = text.replace(/^- /gm, '- '); // Ensure list items start with a hyphen
-
-    return text.trim(); // Remove leading/trailing whitespace
-}
 
 // Start the server
 const PORT = process.env.PORT || 5000;
