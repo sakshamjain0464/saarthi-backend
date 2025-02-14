@@ -218,15 +218,34 @@ app.post('/ask-question', async (req, res) => {
     }
 })
 app.post('/download-itinerary', (req, res) => {
-    let { itineraryMarkdown } = req.body;
+    let { itineraryMarkdown, language } = req.body;
     if (!itineraryMarkdown) {
         return res.status(400).json({ error: 'Itinerary markdown is required.' });
     }
 
     // Convert Markdown to HTML using marked
     itineraryMarkdown += `\n \n \n <div style="text-align:right; font-style: italic;">Saarthi - By Naitik Tiwari and Saksham Jain</div>`
-    console.log(itineraryMarkdown)
-    const htmlContent = marked.parse(itineraryMarkdown);
+    // console.log(itineraryMarkdown)
+    let htmlContent = marked.parse(itineraryMarkdown);
+
+    htmlContent = `<!DOCTYPE html>
+<html lang="${language == 'English' ? 'en' : 'hi'}">
+<head>
+  <meta charset="utf-8">
+  <title>Itinerary</title>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Noto Sans Devanagari', sans-serif;
+    }
+  </style>
+</head>
+<body>
+  <!-- Insert your marked-generated HTML here -->
+  ${htmlContent}
+</body>
+</html>
+`
 
     // Generate a unique filename for the PDF
     const fileName = `${new Date().toISOString}.pdf`;
@@ -264,7 +283,7 @@ app.post('/download-itinerary', (req, res) => {
 
 
 // Start the server
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
