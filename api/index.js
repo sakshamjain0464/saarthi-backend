@@ -14,8 +14,8 @@ app.use(cors());
 app.use(express.json());
 
 // Gemini API configuration
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent';
-const GEMINI_API_KEY = 'AIzaSyCUzpgJqzBXjLOmqO9l340YlyH5AqLyJWk';
+const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
+const GEMINI_API_KEY = 'AIzaSyDO90TnDE9SpT7fD-okwoUP8p395yvltUg';
 
 const pdfDir = path.join(__dirname, 'pdfs');
 if (!fs.existsSync(pdfDir)) {
