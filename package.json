@@ -1,19 +1,43 @@
 {
-  "name": "server",
+  "name": "saarthi-backend",
   "version": "1.0.0",
-  "main": "api/index.js",
+  "type": "module",
+  "main": "index.js",
   "scripts": {
-    "start": "nodemon api/index.js"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sakshamjain0464/saarthi-backend.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/sakshamjain0464/saarthi-backend/issues"
+  },
+  "homepage": "https://github.com/sakshamjain0464/saarthi-backend#readme",
+  "description": "",
+  "devDependencies": {
+    "nodemon": "^3.1.9"
   },
   "dependencies": {
-    "axios": "^1.4.0",
+    "@google/generative-ai": "^0.24.0",
+    "@langchain/community": "^0.3.36",
+    "@langchain/core": "^0.3.42",
+    "@langchain/google-genai": "^0.1.11",
+    "axios": "^1.8.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
+    "duck-duck-scrape": "^2.2.7",
     "express": "^4.21.2",
-    "html-pdf": "^3.0.1",
+    "fs": "^0.0.1-security",
+    "langchain": "^0.3.19",
     "marked": "^15.0.7",
-    "nodemon": "^3.1.9",
-    "uuid": "^11.0.5",
+    "morgan": "^1.10.0",
+    "path": "^0.12.7",
     "wkhtmltopdf": "^0.4.0"
   }
 }
