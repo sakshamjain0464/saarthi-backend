@@ -8,6 +8,7 @@ import path from 'path'
 import generateIterinary from './models/iterinary.model.js'
 import answerQuestion from './models/chat.model.js'
 import modifyIterinary from './models/modifyIterinary.model.js'
+import getLocation from './models/location.model.js'
 
 const app = express()
 const PORT = process.env.PORT || 5000
@@ -120,6 +121,24 @@ ${htmlContent}
       })
     }
   )
+})
+
+app.post('/locations', async (req, res) => {
+  console.log(req.body)
+  const message = req.body.message
+  if (!message) {
+    return res.status(400).json({ error: 'message is required.' })
+  }
+  try {
+    const response = await getLocation(message)
+    if (!response) {
+      return res.status(500).json({ error: 'Failed to extract locations.' })
+    }
+    res.json({ data: response })
+  } catch (error) {
+    console.error('Error:', error)
+    res.status(500).json({ error: 'Failed to extract locations.' })
+  }
 })
 
 app.listen(PORT, () => {
